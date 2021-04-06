@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+// プロトタイプ宣言
+Node *expr();
+Node *mul();
+Node *primary();
+
 // トークンの種類
 typedef enum {
     TK_RESERVED, // 記号
