@@ -57,3 +57,4 @@ dkms.conf
 main
 tmp
 tmp.s
+.bash_history
