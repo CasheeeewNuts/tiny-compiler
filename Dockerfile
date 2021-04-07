@@ -6,5 +6,3 @@ RUN apt update \
 
 USER user
 WORKDIR /home/user
-
-RUN mkdir src
