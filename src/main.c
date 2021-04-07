@@ -25,6 +25,7 @@ struct Token {
 // 現在着目しているトークン
 // 入力トークン列を標準入力のようなストリームとして扱うためグローバル宣言している
 Token *token;
+char *user_input;
 
 // エラーを報告する関数
 void error(char *fmt, ...) {
@@ -155,9 +156,9 @@ Node *expr() {
 
     for (;;) {
         if (consume('+')) {
-            node = new_node(ND_ADD, node, mul())
+            node = new_node(ND_ADD, node, mul());
         } else if (consume('-')) {
-            node = new_node(ND_SUB, node, mul())
+            node = new_node(ND_SUB, node, mul());
         } else {
             return node;
         }
@@ -217,7 +218,7 @@ void gen(Node *node) {
             break;
     }
 
-    printf("  push rax\n")
+    printf("  push rax\n");
 }
 
 
@@ -227,24 +228,21 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    token = tokenize(argv[1]);
+    // トークナイズしてからパースする
+    user_input = argv[1];
+    token = tokenize(user_input);
+    Node *node = expr();
 
+    // アセンブリの前半部分を出力
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
     printf("main:\n");
 
-    printf("  mov rax, %d\n", expect_number());
+    // 抽象構文木を下りながらコード生成
+    gen(node);
 
-    while (!at_eof()) {
-        if (consume('+')) {
-            printf("  add rax, %d\n", expect_number());
-            continue;
-        }
-
-        expect('-');
-        printf("  sub rax, %d\n", expect_number());
-    }
-
+    // スタックのトップに残っている計算結果をRAXにロードする
+    printf("  pop rax\n");
     printf("  ret\n");
     return 0;
 }
