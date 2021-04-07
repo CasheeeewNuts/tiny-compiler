@@ -67,10 +67,12 @@ bool at_eof() {
     return token->kind == TK_EOF;
 }
 
+// 新しいトークンを作成してcurに繋げる
 Token *new_token(TokenKind kind, struct Token *cur, char *str) {
     Token *tok = calloc(1, sizeof(Token));
     tok->kind = kind;
     tok->str = str;
+
     cur->next = tok;
 
     return tok;
@@ -87,7 +89,7 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if (*p == '+' || *p == '-') {
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
             cur = new_token(TK_RESERVED, cur, p++);
             continue;
         }
